@@ -14,7 +14,7 @@ lastUpdated: 2026-09-28
 
 ### [GitHub Copilot app ツアー][first-steps-app]
 
-空のフォルダーから Space Quiz を作成し、GitHub への公開、Issue の実装、Copilot レビュー、オートメーションのスケジュール設定、Canvas ワークフローの体験まで進めます。
+空のフォルダーから Space Quiz を作成し、GitHub への公開、Issue の実装、Copilot レビュー、自動化のスケジュール設定、Canvas ワークフローの体験まで進めます。
 
 ### [GitHub Copilot CLI のはじめの一歩][first-steps-cli]
 
@@ -22,7 +22,7 @@ lastUpdated: 2026-09-28
 
 ### [Visual Studio Code のはじめの一歩][first-steps-vscode]
 
-VS Code で Space Quiz を作成し、統合ブラウザーでのテスト、ソース管理での公開、GitHub ツールを使った Issue とプル リクエストの操作、クラウド セッションへの委任まで進めます。
+VS Code で Space Quiz を作成し、統合ブラウザーでのテスト、ソース管理での公開、GitHub ツールを使った Issue とプル リクエストの操作、クラウド セッションへの引き継ぎまで進めます。
 
 ## 実践的な開発
 
@@ -40,4 +40,4 @@ GitHub Copilot CLI、GitHub Copilot app、GitHub Copilot cloud agent、Visual St
 [first-steps-app]: first-steps/copilot-app/
 [first-steps-cli]: first-steps/copilot-cli/
 [first-steps-vscode]: first-steps/vscode/
-[real-world-development]: ../real-world-development/
+[real-world-development]: real-world-development/

@@ -1,121 +1,93 @@
 ---
-title: "Lição 5 - Usar skills de agente"
+title: "Lição 5 - Personalizar e usar uma skill quality-checks"
+description: "Explore a skill quality-checks existente, personalize o formato do relatório e use-a para validar a filtragem."
 authors:
   - geektrainer
-lastUpdated: 2026-06-30
+lastUpdated: 2026-09-29
 ---
 
-No desenvolvimento de aplicativos, é comum lidar com tarefas repetíveis, como gerar builds, executar testes ou criar pull requests. **Agent Skills** permitem orientar o Copilot — e outros agentes de IA — sobre como executar essas tarefas. Uma skill é uma pasta de instruções, scripts e recursos que o agente pode carregar sob demanda. O [Agent Skills][agent-skills-repo] é um padrão aberto usado por uma variedade de agentes, portanto a mesma skill pode funcionar no Copilot Chat em modo agente, no agente de nuvem do Copilot, no Copilot CLI e no aplicativo GitHub Copilot.
+Escrever código não é suficiente. Você já verificou manualmente se ele funciona e usou arquivos de instruções para garantir que siga os padrões. E quanto aos testes, ao lint e às outras etapas de integração contínua (CI)?
 
-As skills ficam na pasta `.github/skills` de um projeto, ou globalmente em `~/.copilot/skills`. Cada skill é uma pasta que contém um arquivo `SKILL.md` com frontmatter YAML, incluindo `name` e `description`, seguido das instruções em markdown:
+Para essas tarefas, as **skills de agente** são ideais. Elas ajudam o Copilot a executar operações como essas da forma adequada.
 
-```yaml
----
-name: make-contribution
-description: All changes to code must follow the guidance documented in the repository. Before any issue is filed, branch is made, commits generated, or pull request (or PR) created, a search must be done to ensure the right steps are followed. Whenever asked to create an issue, commit messages, to push code, or create a PR, use this skill so everything is done correctly.
----
-```
+Nesta lição, você vai:
 
-As skills também podem incluir subpastas com scripts, assets e material de referência. A estrutura completa é abordada na [especificação de Agent Skills][agent-skills-spec].
-
-> [!TIP]
-> As skills são carregadas dinamicamente. O agente decide qual skill se aplica com base no campo `description` — uma descrição clara e específica para o cenário é o que diferencia uma skill usada de uma skill ignorada.
-
-[agent-skills-repo]: https://github.com/agentskills/agentskills
-[agent-skills-spec]: https://agentskills.io/specification
-
-Vamos explorar como uma skill pode garantir que pull requests sigam as especificações definidas pela equipe.
+- explorar a skill existente `quality-checks`.
+- personalizar o formato dos resultados.
+- recarregar e executar a skill.
 
 ## Cenário
 
-A equipe tem um conjunto de requisitos para pull requests (PR):
+A Tailspin Toys usa a skill `quality-checks` para testes unitários, lint e verificações de tipos. A equipe quer melhorar o relatório para facilitar a leitura.
 
-- mensagens de commit claras, com arquivos agrupados de forma lógica.
-- todos os testes devem passar antes da criação de um PR.
-- cada PR deve conter as seções a seguir:
-    - uma descrição do motivo das alterações.
-    - uma visão geral dos arquivos alterados.
-    - trechos de blocos de código importantes.
-    - detalhes das alterações agrupados de forma coerente.
+## Instruções, scripts e recursos
 
-Como a equipe está usando o Copilot para gerar código e PRs, ela quer garantir que as ferramentas de IA sigam esses requisitos.
+Skills de agente agrupam instruções reutilizáveis, scripts executáveis e recursos de apoio carregados sob demanda. Em geral, cada skill é uma pasta com um arquivo Markdown `SKILL.md`, cujo frontmatter define nome e descrição e cujo conteúdo explica o que a skill faz e quando deve ser usada. A pasta pode conter scripts e outros recursos.
 
-Nesta lição, você irá:
+> [!NOTE]
+> Subpastas e arquivos adicionais são opcionais. A skill `quality-checks` da Tailspin Toys contém apenas `SKILL.md`, pois usa comandos já existentes no projeto.
 
-- explorar uma skill existente para criar pull requests.
-- aprender como as skills são usadas pelo agente de IA.
-- criar um PR que siga as diretrizes com a ajuda da skill.
+Skills podem ficar em `.github/skills`, como recursos compartilhados pela equipe, ou na pasta pessoal `~/.copilot/skills`.
 
-## Executar skills
+## Explorar a skill
 
-As skills são carregadas dinamicamente quando o agente determina que elas são necessárias. A decisão sobre quais skills usar é guiada pela descrição no arquivo `SKILL.md`. Por isso, é importante ter descrições claras que definam o caso de uso da skill.
+1. No Codespace, abra `.github/skills/quality-checks/SKILL.md`.
+2. Leia `name` e `description`; a descrição ajuda o Copilot a decidir quando usar a skill.
+3. Revise as instruções para testes e lint.
+4. Observe que ainda não há uma seção **Results output formatting**.
 
-## Explorar a skill de PR
+## Executar a skill antes da alteração
 
-Como a Tailspin Toys tem um conjunto de requisitos para criar PRs, ela criou uma skill para ajudar ferramentas de IA a gerar PRs que sigam essas diretrizes. Vamos explorar a skill para entender o que ela fará.
+1. Volte à conversa de filtragem no modo Interactive.
+2. Peça ao Copilot que execute as três verificações:
 
-1. Abra `.github/skills/make-contribution/SKILL.md`.
-2. Observe o nome e a descrição. Perceba como a descrição destaca o cenário em que a skill deve ser usada, isto é, sempre que houver uma solicitação para criar um pull request ou fazer commit de código.
-3. Leia a skill inteira. Observe como as regras definem a criação de branches, a geração de commits e o conteúdo do pull request.
+   ```plaintext
+   Run the quality-checks skill for unit tests, lint, and type checks.
+   ```
 
-## Usar a skill
+3. Leia o relatório.
 
-Como destacado anteriormente, as skills são invocadas automaticamente pelo Copilot CLI. Portanto, basta pedir que o Copilot crie um PR.
+## Personalizar o relatório
 
-> [!TIP]
-> **Inicie uma sessão do Copilot CLI**
->
-> Antes de iniciar os exercícios abaixo, volte ao codespace e abra um terminal (<kbd>Ctrl</kbd>+<kbd>`</kbd>, se ainda não houver um aberto). Em seguida, inicie o Copilot CLI com `--yolo` e `--enable-all-github-mcp-tools`:
->
-> ```bash
-> copilot --yolo --enable-all-github-mcp-tools
-> ```
->
-> Para retomar a sessão mais recente deste projeto em vez de iniciar uma nova, execute `copilot --yolo --enable-all-github-mcp-tools --continue`. Se o Copilot CLI já estiver em execução por causa de uma lição anterior, envie `/clear` para começar uma conversa limpa.
->
-> `--enable-all-github-mcp-tools` habilita as ferramentas GitHub MCP de leitura e escrita para a sessão atual, para que o Copilot possa ler seu backlog e abrir pull requests durante o fluxo do workshop.
+Acrescente ao final de `.github/skills/quality-checks/SKILL.md`:
 
-> [!CAUTION]
-> `--yolo` habilita permissões automáticas completas (`--allow-all-tools`, `--allow-all-paths` e `--allow-all-urls`). Use-o apenas em um ambiente isolado, como um Codespace ou uma VM, e nunca o defina como alias padrão no seu desenvolvimento diário. Consulte [Allowing and denying tool use][allow-all-warning] para saber mais.
+```markdown
+## Results output formatting
 
-[allow-all-warning]: https://docs.github.com/copilot/how-tos/copilot-cli/use-copilot-cli/allowing-tools
+Upon completion, report each command that ran and whether it passed, failed, or was blocked. Include test counts, durations, errors, warnings, and other metrics only when the tool reports them. Identify the next action for any failure or blocker, and never describe a skipped or incomplete check as passed.
+```
 
-1. Peça que o Copilot crie um PR usando o prompt a seguir:
+## Executar a skill atualizada
 
-    ```
-    Can you please create a pull request for me!
-    ```
+O Copilot CLI pode recarregar skills editadas sem reiniciar a conversa.
 
-2. O Copilot reconhecerá a solicitação. Após alguns instantes, você verá o Copilot indicar que está usando a skill **make-contribution**.
+1. Digite `/skills reload`.
+2. Envie novamente o mesmo prompt:
 
-3. O Copilot seguirá as instruções da skill. Ele começará executando os testes, depois criará uma branch, fará commits e, por fim, abrirá o PR.
-4. Quando o PR for criado, volte ao repositório e abra-o. Observe como as seções seguem as diretrizes definidas na skill e atendem aos requisitos da equipe.
-5. Antes de passar para a próxima lição, redefina seu workspace local para uma branch nova criada a partir de `main`, para manter o trabalho de acessibilidade separado deste PR de filtragem:
+   ```plaintext
+   Run the quality-checks skill for unit tests, lint, and type checks.
+   ```
 
-    ```bash
-    git checkout main
-    git pull
-    git checkout -b accessibility-cli
-    ```
+3. Leia o novo relatório e compare-o com o anterior.
 
 ## Resumo e próximos passos
 
-Com a ajuda de uma skill de agente, você criou um novo PR que segue requisitos documentados. Você:
+Você explorou, personalizou, recarregou e executou uma skill para testes unitários, lint e verificações de tipos. Essa alteração acompanhará a filtragem no PR. Em seguida, permita que o Copilot interaja com o site usando o [servidor Playwright MCP][next-lesson].
 
-- explorou uma skill existente para criar pull requests.
-- aprendeu como as skills são usadas pelo agente de IA.
-- criou um PR que segue as diretrizes com a ajuda da skill.
+## Mais exemplos de skills
 
-As skills são perfeitas para tarefas, mas, para operações mais robustas, vale aproveitar [agentes personalizados][next-lesson], que serão o próximo tópico.
+Estes exemplos da comunidade são referências, não tarefas adicionais:
 
-## Recursos
+- [Especificação de Agent Skills][skill-spec]
+- [Fluxo de contribuição: `make-repo-contribution`][contribution-example]
+- [Documentos de requisitos: `prd`][prd-example]
+- [Diagramas e script de exportação: `drawio`][drawio-example]
+- [Testes de navegador: `webapp-testing`][browser-example]
 
-- [Sobre Agent Skills][about-agent-skills]
-- [Especificação de Agent Skills][agent-skills-spec]
-- [Repositório Agent Skills][agent-skills-repo]
-- [Agent Skills no awesome-copilot][awesome-copilot-skills]
-
-[previous-lesson]: ../4-mcp/
-[next-lesson]: ../6-custom-agents/
-[about-agent-skills]: https://docs.github.com/copilot/concepts/agents/about-agent-skills
-[awesome-copilot-skills]: https://github.com/github/awesome-copilot/tree/main/skills
+[previous-lesson]: ../4-custom-instructions/
+[next-lesson]: ../6-mcp-playwright/
+[skill-spec]: https://agentskills.io/specification
+[contribution-example]: https://github.com/github/awesome-copilot/tree/main/skills/make-repo-contribution
+[prd-example]: https://github.com/github/awesome-copilot/tree/main/skills/prd
+[drawio-example]: https://github.com/github/awesome-copilot/tree/main/skills/drawio
+[browser-example]: https://github.com/github/awesome-copilot/tree/main/skills/webapp-testing
